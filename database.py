@@ -6,5 +6,5 @@ class database:
 	conn = sqlite3.connect(path)
 
 	def connect(self):
-		c = self.conn.cursor()	
+		curs = self.conn.cursor()	
 		return curs

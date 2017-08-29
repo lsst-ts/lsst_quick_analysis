@@ -107,16 +107,27 @@ class basicAnalysis:
 		print("		min: " + str(minVal))
 		print("		max: " + str(maxVal))
 
-	def parkPositionsTaken():
+	def parkPositionsTaken(self):
 		pass
 
+	def printOutSlewInfo(self):
+
+		count = 0
+
+		# for row in self.c.execute("SELECT SlewHistory.slewCount, SlewHistory.startDate, SlewHistory.endDate, SlewHistory.slewTime, SlewHistory.slewDistance, SlewInitialState.telAz AS startTelAz, SlewInitialState.telAlt AS startTelAlt, SlewInitialState.rotTelPos AS startRotTelPos, SlewInitialState.filter AS startFilter from SlewHistory, SlewInitialState"):
+		for row in self.c.execute("SELECT SlewHistory.slewCount, SlewHistory.startDate, SlewHistory.endDate, SlewHistory.slewTime, SlewHistory.slewDistance, SlewInitialState.telAz AS startTelAz, SlewInitialState.telAlt AS startTelAlt, SlewInitialState.rotTelPos AS startRotTelPos, SlewInitialState.filter AS startFilter from SlewHistory JOIN SlewInitialState ON SlewHistory.slewCount = SlewInitialState.SlewHistory_slewCount JOIN SlewMaxSpeeds ON SlewInitialState.SlewHistory_slewCount = SlewMaxSpeeds.SlewHistory_slewCount"):
+			if count == 10:
+				break
+			count += 1
+			print(row)
 
 
 
 ba = basicAnalysis()
 
-ba.numberOfNights()
-ba.visitePerNight()
-ba.visitsPerNightAvg()
-ba.totalFilterChanges()
-ba.slewTimeNumbers()
+# ba.numberOfNights()
+# ba.visitePerNight()
+# ba.visitsPerNightAvg()
+# ba.totalFilterChanges()
+# ba.slewTimeNumbers()
+ba.printOutSlewInfo()

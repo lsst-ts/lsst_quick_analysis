@@ -75,7 +75,42 @@ class basicAnalysis:
 		print(self.CURSOR_UP_ONE + self.ERASE_LINE + "Calculating total filter changes... " + str(counter))
 
 	def filterChangesPerNightAvg(self):
-		print()
+		print("Calculating total filter changes per night avg... ")
+
+	def slewTimeNumbers(self):
+
+		print("Calculating slew time numbers...")
+
+		# for calculating avg
+		totalSlewTimes = 0
+		totalSlewTime = 0
+
+		# starting val for calculating min & max
+		curs = self.c.execute("SELECT slewTime FROM SlewHistory;")
+		maxVal = curs.fetchone()[0]
+		minVal = maxVal
+
+		for row in self.c.execute("SELECT slewTime FROM SlewHistory;"):			
+			slewTime = row[0]
+			totalSlewTimes += 1
+			totalSlewTime += slewTime
+
+			if slewTime < minVal:
+				minVal = slewTime
+
+			if slewTime > maxVal:
+				maxVal = slewTime
+
+		slewAverage = totalSlewTime/totalSlewTimes
+
+		print("		avg: " + str(slewAverage))
+		print("		min: " + str(minVal))
+		print("		max: " + str(maxVal))
+
+	def parkPositionsTaken():
+		pass
+
+
 
 
 ba = basicAnalysis()
@@ -84,4 +119,4 @@ ba.numberOfNights()
 ba.visitePerNight()
 ba.visitsPerNightAvg()
 ba.totalFilterChanges()
-	
+ba.slewTimeNumbers()

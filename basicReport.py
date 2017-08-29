@@ -15,7 +15,6 @@ class basicReport:
 	directory = "reports/"
 
 	# Printing "parts"
-
 	LINE = "+-----------+------------------+------------------+------------+------------+------------+-------------+----------------+-------------+"
 	HEADER = "| slewCount | startDate        | endDate          | slewTime   |  slewDist  | startTelAz | startTelAlt | startRotTelPos | startFilter |"
 
@@ -25,14 +24,11 @@ class basicReport:
 
 	def writeOutInitSlewInfo(self):
 
-		file = open("reports/test.txt","w") 
+		file = open("reports/initSlewInfo.txt","w") 
 
 		file.write(self.LINE + "\n")
 		file.write(self.HEADER + "\n")
 		file.write(self.LINE + "\n")
-
-
-		count = 0
 
 		for row in self.c.execute("""SELECT SlewHistory.slewCount, 
 											SlewHistory.startDate, 	
@@ -51,13 +47,33 @@ class basicReport:
 			file.write("\n") 
 
 
+	
+	def writeOutFinalSlewInfo(self):
 
+		file = open("reports/finalSlewInfo.txt","w") 
 
-			if count == 10:
-				break
-			count += 1
+		file.write(self.LINE + "\n")
+		file.write(self.HEADER + "\n")
+		file.write(self.LINE + "\n")
+
+		for row in self.c.execute("""SELECT SlewHistory.slewCount, 
+											SlewHistory.startDate, 	
+											SlewHistory.endDate, 
+											SlewHistory.slewTime, 
+											SlewHistory.slewDistance, 
+											SlewFinalState.telAz AS startTelAz, 
+											SlewFinalState.telAlt AS startTelAlt, 
+											SlewFinalState.rotTelPos AS startRotTelPos, 
+											SlewFinalState.filter AS startFilter FROM SlewHistory 
+											JOIN SlewFinalState ON SlewHistory.slewCount = SlewFinalState.SlewHistory_slewCount"""):
 			
+			file.write('|{:>10} | {:>16} | {:>16} | {:>10} | {:>10} | {:>10} | {:>11} | {:>14} | {:>11} |'
+				.format(str(row[0]), str(row[1]), str(row[2]), str(round(row[3],6)), str(round(row[4],6)), 
+						str(round(row[5],6)), str(round(row[6],6)), str(round(row[7],6)), str(row[8])))
+			file.write("\n") 
+
+
 
 br = basicReport()
-
 br.writeOutInitSlewInfo()
+br.writeOutFinalSlewInfo()

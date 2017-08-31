@@ -5,6 +5,7 @@ import sys
 import sqlite3
 
 from database import *
+from config import *
 
 class basicAnalysis:
 
@@ -13,47 +14,33 @@ class basicAnalysis:
 	CURSOR_UP_ONE = '\x1b[1A'
 	ERASE_LINE = '\x1b[2K'
 
-	def numberOfNights(self):
+
+	def nightNumbers(self):
 		
-		print("Calculating number of nights...")
+		print("Calculating night numbers...")
 
-		count = 0
-		for row in self.c.execute("SELECT * FROM ObsExposures;"):			
-			count+=1
-
-		print(self.CURSOR_UP_ONE + self.ERASE_LINE + "Calculating number of nights... " + str(count))
+		totalNightCount = 0
+		visitsPerNightCounter = {}
 
 
-	def visitePerNight(self):
-		
-		print("Calculating visits per night...")
-		
-		count = 0
-		for row in self.c.execute("SELECT * FROM ObsExposures;"):			
-			count+=1
-
-		print(self.CURSOR_UP_ONE + self.ERASE_LINE + "Calculating visits per night... " + str(count/2))
-
-	def visitsPerNightAvg(self):
-
-		print("Calculating visits per night avg...")
-
-		counter = {}
-		total = 0
-
+		# Get the total amount of exposures, as well as how many nights these exposure count for
 		for row in self.c.execute("SELECT night FROM ObsHistory;"):			
 			
-			night = row[0]
-			total += 1
+			totalNightCount+=1
+			currNight = row[0]
 
-			if night in counter:
-				counter[night] = counter[night] + 1
+			if currNight in visitsPerNightCounter:
+				visitsPerNightCounter[currNight] = visitsPerNightCounter[currNight] + 1
 			else:
-				counter[night] = 1
+				visitsPerNightCounter[currNight] = 1
 
-			avg = total/len(counter)
+		totalVisitCount = totalNightCount/VISIT
 
-		print(self.CURSOR_UP_ONE + self.ERASE_LINE + "Calculating visits per night avg... " + str(avg))
+		print("		number of nights: " + str(totalNightCount))
+		print("		number of visits: " + str(totalVisitCount))
+		print("		visits/night avg: " + str(totalVisitCount/(len(visitsPerNightCounter))))
+
+
 
 	def totalFilterChanges(self):
 
@@ -74,8 +61,6 @@ class basicAnalysis:
 
 		print(self.CURSOR_UP_ONE + self.ERASE_LINE + "Calculating total filter changes... " + str(counter))
 
-	def filterChangesPerNightAvg(self):
-		print("Calculating total filter changes per night avg... ")
 
 	def slewTimeNumbers(self):
 
@@ -111,8 +96,6 @@ class basicAnalysis:
 
 ba = basicAnalysis()
 
-# ba.numberOfNights()
-# ba.visitePerNight()
-# ba.visitsPerNightAvg()
+ba.nightNumbers()
 # ba.totalFilterChanges()
-# ba.slewTimeNumbers()
+ba.slewTimeNumbers()

@@ -12,6 +12,8 @@ class basicReport:
 	# Some pre-liminary set up for the run
 	db = database()
 	c = db.connect()
+
+	prting()
 	CURSOR_UP_ONE = '\x1b[1A'
 	ERASE_LINE = '\x1b[2K'
 	if not os.path.exists(REPORT_DIRECTORY):
@@ -71,5 +73,5 @@ class basicReport:
 
 
 br = basicReport()
-br.writeOutStartSlewInfo()
-br.writeOutFinalSlewInfo()
+# br.writeOutStartSlewInfo()
+# br.writeOutFinalSlewInfo()

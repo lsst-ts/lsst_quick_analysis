@@ -21,6 +21,9 @@ class database:
 
 		allFiles += each + ", "
 
+	# Make this public path avilable to other classes
+	path = ""
+
 	"""Creates a cursor to a database to be used within the other scripts. Also
 	responsible for printing out useful information to the user along with 
 	obtaining the file that the user wishes to analyse
@@ -47,7 +50,7 @@ class database:
 				databaseFile = str(input('try again: '))
 
 
-		path = DB_DIRECTORY + databaseFile
-		conn = sqlite3.connect(path)
-		curs = self.conn.cursor()	
+		self.path = DB_DIRECTORY + databaseFile
+		conn = sqlite3.connect(self.path)
+		curs = conn.cursor()	
 		return curs

@@ -111,8 +111,8 @@ class basicAnalysis:
 
 ba = basicAnalysis()
 
-ba.numberOfNights()
-ba.visitePerNight()
-ba.visitsPerNightAvg()
-ba.totalFilterChanges()
-ba.slewTimeNumbers()
+# ba.numberOfNights()
+# ba.visitePerNight()
+# ba.visitsPerNightAvg()
+# ba.totalFilterChanges()
+# ba.slewTimeNumbers()

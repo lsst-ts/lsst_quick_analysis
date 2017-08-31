@@ -19,7 +19,7 @@ class basicAnalysis:
 	c = db.connect()
 
 	
-	# Our dictionaries that are used for all metric calculations
+	# Our dictionaries where all metric calculations derive from
 	obs_history_table = {"night":[], "filter":[]}
 	slew_history_table = {"slewTime":[]}
 
@@ -143,6 +143,7 @@ class basicAnalysis:
 		avgSlewTime = round(totalSlewTime/slewTimeCount, 4)
 
 		print("		avg slew time: " + str(avgSlewTime))
+
 		
 
 ba = basicAnalysis()
@@ -151,7 +152,13 @@ ba.numberOfExposures()
 ba.numberOfVisits()
 ba.numberOfObservedNights()
 ba.averageVisitsPerObservedNights()
+
+print()
+
 ba.numberOfFilterChanges()
+
+print()
+
 ba.maxSlewTime()
 ba.minSlewTime()
 ba.avgSlewTime()

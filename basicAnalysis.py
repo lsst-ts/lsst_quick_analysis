@@ -19,14 +19,14 @@ class basicAnalysis:
 		
 		print("Calculating night numbers...")
 
-		totalNightCount = 0
+		exposureCount = 0
 		visitsPerNightCounter = {}
 
 
 		# Get the total amount of exposures, as well as how many nights these exposure count for
 		for row in self.c.execute("SELECT night FROM ObsHistory;"):			
 			
-			totalNightCount+=1
+			exposureCount+=1
 			currNight = row[0]
 
 			if currNight in visitsPerNightCounter:
@@ -34,11 +34,12 @@ class basicAnalysis:
 			else:
 				visitsPerNightCounter[currNight] = 1
 
-		totalVisitCount = totalNightCount/VISIT
+		totalVisitCount = int(exposureCount/VISIT)
 
-		print("		number of nights: " + str(totalNightCount))
+		print("		number of exposures: " + str(exposureCount))
 		print("		number of visits: " + str(totalVisitCount))
-		print("		visits/night avg: " + str(totalVisitCount/(len(visitsPerNightCounter))))
+		print("		number of nights: " + str(len(visitsPerNightCounter)))
+		print("		visits/night avg: " + str(round(totalVisitCount/(len(visitsPerNightCounter)),4)))
 
 
 

@@ -131,6 +131,35 @@ class basicAnalysis:
 
 		print("		number of filter changes: " + str(filterChangeCounter))
 
+	def avgFilterChangesPerNight(self):
+
+		filterChangeCounter = 0
+		currentCamFilter = self.obs_history_table["filter"][0]
+
+		for camFilter in self.obs_history_table["filter"]:			
+			
+			if camFilter == currentCamFilter:
+				continue
+			else:
+				filterChangeCounter += 1
+				currentCamFilter = camFilter
+
+		numberOfObservedNights = 1
+
+		currentNight = self.obs_history_table["night"][0]
+
+		for night in self.obs_history_table["night"]:
+
+			if night == currentNight:
+				continue
+			else:
+				numberOfObservedNights += 1
+				currentNight = night
+
+		avgFilterChangesPerNight = filterChangeCounter/numberOfObservedNights
+
+		print("		avg filer changes/observed nights: " + str(round(avgFilterChangesPerNight,2)))
+
 
 	def maxSlewTime(self):
 
@@ -214,7 +243,6 @@ class basicAnalysis:
 		DD_prop_perc = DD/visitCount * 100
 		total_prop_perc = round(NES_prop_perc + SCP_prop_perc + WFD_prop_perc + GP_prop_perc + DD_prop_perc,2)
 
-
 		print("		{:>42}  {:>10}".format("(history)", "(total)"))
 		print("		NorthElipticSpur  : {:>10} {:>10}% {:>10}%".format(str(round(NES,2)), str(round(NES_prop_hist_perc,2)), str(round(NES_prop_perc,2))))
 		print("		SouthCelestialPole: {:>10} {:>10}% {:>10}%".format(str(round(SCP,2)), str(round(SCP_prop_hist_perc,2)), str(round(SCP_prop_perc,2))))
@@ -236,6 +264,7 @@ ba.averageVisitsPerObservedNights()
 print()
 
 ba.numberOfFilterChanges()
+ba.avgFilterChangesPerNight()
 
 print()
 

@@ -21,6 +21,7 @@ class basicAnalysis:
 	
 	# Our dictionaries where all metric calculations derive from
 	obs_history_table = {"night":[], "filter":[]}
+	obs_proposal_history_table = {"proposal_propId":[]}
 	slew_history_table = {"slewTime":[]}
 
 	"""Any columns that need to be used for the analysis should be loaded here.
@@ -29,19 +30,32 @@ class basicAnalysis:
 	"""
 	def __init__(self):
 
+		print("\n" + ("=" * 80) ) 
+		print("CALCULATING METRICS...")
+		print("-" * 80)
+
+
 		for row in self.c.execute("SELECT night, filter FROM ObsHistory;"):	
 
 			self.obs_history_table["night"].append(row[0])
 			self.obs_history_table["filter"].append(row[1])
 
-
 		for row in self.c.execute("SELECT slewTime FROM SlewHistory;"):
 			
 			self.slew_history_table["slewTime"].append(row[0])
 
-		print("\n" + ("=" * 80) ) 
-		print("CALCULATING METRICS...")
-		print("-" * 80)
+		for row in self.c.execute("SELECT Proposal_propId FROM ObsProposalHistory;"):
+
+			self.obs_proposal_history_table["proposal_propId"].append(row[0])
+
+		# for row in self.c.execute("SELECT propId FROM Proposal;"):
+
+		# 	# 1 = NorthElipticSpur
+		# 	# 2 = SouthCelestialPole
+		# 	# 3 = WideFastDeep
+		# 	# 4 = GalacticPlance
+		# 	# 5 = DeepDrilling
+		# 	self.proposal_table[row[0]] = 0
 
 
 	def numberOfExposures(self):
@@ -144,7 +158,73 @@ class basicAnalysis:
 
 		print("		avg slew time: " + str(avgSlewTime))
 
+
+	""" These arbitrary numbers are decided by the scientists, noted here a
+	second time for easy reference on the print statements. 
+	1 = NorthElipticSpur (NES)
+	2 = SouthCelestialPole (SCP)
+	3 = WideFastDeep (WFD)
+	4 = GalacticPlane (GP)
+	5 = DeepDrilling (DD)
+
+	I list two percents, one divided by "history visit count" which is the 
+	totaled number of visits in each proposal. The other is "visit count" which
+	is the actual number of visits the physical telescope made
+	"""
+	def numberOfVisitsPerProposal(self):
+
+
+		# get the total amount of proposals found
+		histVisitCount = 0
+		historyProposalCounter = {}
 		
+		for each in self.obs_proposal_history_table["proposal_propId"]:
+			
+			histVisitCount += 1
+
+			if each in historyProposalCounter:
+				historyProposalCounter[each] += 1
+			else:
+				historyProposalCounter[each] = 1
+
+
+		# hist visit count given our def of VISIT, may be more than the 
+		# number of actual visits since there may be overlap in proposals
+		histVisitCount/=VISIT
+		visitCount = int(len(self.obs_history_table["night"])/VISIT)
+		
+		# Visit count of each proposal
+		NES = historyProposalCounter[1]/VISIT
+		SCP = historyProposalCounter[2]/VISIT
+		WFD = historyProposalCounter[3]/VISIT
+		GP = historyProposalCounter[4]/VISIT
+		DD = historyProposalCounter[5]/VISIT
+
+		NES_prop_hist_perc = NES/histVisitCount * 100
+		SCP_prop_hist_perc = SCP/histVisitCount * 100
+		WFD_prop_hist_perc = WFD/histVisitCount * 100
+		GP_prop_hist_perc = GP/histVisitCount * 100
+		DD_prop_hist_perc = DD/histVisitCount * 100
+		total_prop_hist_perc = round(NES_prop_hist_perc + SCP_prop_hist_perc + WFD_prop_hist_perc + GP_prop_hist_perc + DD_prop_hist_perc,2)
+
+		NES_prop_perc = NES/visitCount * 100
+		SCP_prop_perc = SCP/visitCount * 100
+		WFD_prop_perc = WFD/visitCount * 100
+		GP_prop_perc = GP/visitCount * 100
+		DD_prop_perc = DD/visitCount * 100
+		total_prop_perc = round(NES_prop_perc + SCP_prop_perc + WFD_prop_perc + GP_prop_perc + DD_prop_perc,2)
+
+
+		print("		{:>42}  {:>10}".format("(history)", "(total)"))
+		print("		NorthElipticSpur  : {:>10} {:>10}% {:>10}%".format(str(round(NES,2)), str(round(NES_prop_hist_perc,2)), str(round(NES_prop_perc,2))))
+		print("		SouthCelestialPole: {:>10} {:>10}% {:>10}%".format(str(round(SCP,2)), str(round(SCP_prop_hist_perc,2)), str(round(SCP_prop_perc,2))))
+		print("		WideFastDeep      : {:>10} {:>10}% {:>10}%".format(str(round(WFD,2)), str(round(WFD_prop_hist_perc,2)), str(round(WFD_prop_perc,2))))
+		print("		GalacticPlane     : {:>10} {:>10}% {:>10}%".format(str(round(GP,2)) , str(round(GP_prop_hist_perc,2)) , str(round(GP_prop_perc,2))))
+		print("		DeepDrilling      : {:>10} {:>10}% {:>10}%".format(str(round(DD,2)) , str(round(DD_prop_hist_perc,2)) , str(round(DD_prop_perc,2))))
+		print("		{:>42}% {:>10}%".format(total_prop_hist_perc, total_prop_perc))
+
+
+
 
 ba = basicAnalysis()
 
@@ -162,3 +242,7 @@ print()
 ba.maxSlewTime()
 ba.minSlewTime()
 ba.avgSlewTime()
+
+print()
+
+ba.numberOfVisitsPerProposal()

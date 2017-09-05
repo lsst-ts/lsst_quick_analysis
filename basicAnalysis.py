@@ -221,6 +221,12 @@ class basicAnalysis:
 		# number of actual visits since there may be overlap in proposals
 		histVisitCount/=VISIT
 		visitCount = int(len(self.obs_history_table["night"])/VISIT)
+
+
+		# Python 2 needs floats, otherwise 2/3 = 0
+		histVisitCount *= 1.0
+		visitCount *= 1.0
+
 		
 		# Visit count of each proposal
 		NES = historyProposalCounter[1]/VISIT
@@ -229,12 +235,14 @@ class basicAnalysis:
 		GP = historyProposalCounter[4]/VISIT
 		DD = historyProposalCounter[5]/VISIT
 
-		NES_prop_hist_perc = NES/histVisitCount * 100
+
+		NES_prop_hist_perc = (NES/histVisitCount) * 100
 		SCP_prop_hist_perc = SCP/histVisitCount * 100
 		WFD_prop_hist_perc = WFD/histVisitCount * 100
 		GP_prop_hist_perc = GP/histVisitCount * 100
 		DD_prop_hist_perc = DD/histVisitCount * 100
 		total_prop_hist_perc = round(NES_prop_hist_perc + SCP_prop_hist_perc + WFD_prop_hist_perc + GP_prop_hist_perc + DD_prop_hist_perc,2)
+
 
 		NES_prop_perc = NES/visitCount * 100
 		SCP_prop_perc = SCP/visitCount * 100
@@ -242,6 +250,7 @@ class basicAnalysis:
 		GP_prop_perc = GP/visitCount * 100
 		DD_prop_perc = DD/visitCount * 100
 		total_prop_perc = round(NES_prop_perc + SCP_prop_perc + WFD_prop_perc + GP_prop_perc + DD_prop_perc,2)
+
 
 		print("		{:>42}  {:>10}".format("(history)", "(total)"))
 		print("		NorthElipticSpur  : {:>10} {:>10}% {:>10}%".format(str(round(NES,2)), str(round(NES_prop_hist_perc,2)), str(round(NES_prop_perc,2))))
@@ -261,17 +270,17 @@ ba.numberOfVisits()
 ba.numberOfObservedNights()
 ba.averageVisitsPerObservedNights()
 
-print()
+print("")
 
 ba.numberOfFilterChanges()
 ba.avgFilterChangesPerNight()
 
-print()
+print("")
 
 ba.maxSlewTime()
 ba.minSlewTime()
 ba.avgSlewTime()
 
-print()
+print("")
 
 ba.numberOfVisitsPerProposal()

@@ -8,7 +8,7 @@ DB_DIRECTORY = "/Users/aheyer/Projects/OpSimDB/"
 VISIT = 2
 
 
-
+# Python 2 & 3 compatible function binding
 try:
    input = raw_input
 except NameError:

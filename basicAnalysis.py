@@ -11,7 +11,8 @@ from config import *
 definition will be it's own metric. There may be redundency when calculating 
 averages for example. However a user will be free to comment out any metrics
 they wish with no recoil. For ease of readbility, variables should be very
-explicit. 
+explicit. If variable names contains an underscore, then I am refering to 
+database schema related attributes.
 """
 class basicAnalysis:
 
@@ -20,8 +21,8 @@ class basicAnalysis:
 
 	
 	# Our dictionaries where all metric calculations derive from
-	obs_history_table = {"night":[], "filter":[]}
-	obs_proposal_history_table = {"proposal_propId":[]}
+	obs_history_table = {"observationId": [],"night":[], "filter":[]}
+	obs_proposal_history_table = {"propHistId":[], "proposal_propId":[], "obsHistory_observationId":[]}
 	slew_history_table = {"slewTime":[]}
 
 	"""Any columns that need to be used for the analysis should be loaded here.
@@ -35,18 +36,21 @@ class basicAnalysis:
 		print("-" * 80)
 
 
-		for row in self.c.execute("SELECT night, filter FROM ObsHistory;"):	
+		for row in self.c.execute("SELECT observationId, night, filter FROM ObsHistory;"):	
 
-			self.obs_history_table["night"].append(row[0])
-			self.obs_history_table["filter"].append(row[1])
+			self.obs_history_table["observationId"].append(row[0])
+			self.obs_history_table["night"].append(row[1])
+			self.obs_history_table["filter"].append(row[2])
+
+		for row in self.c.execute("SELECT propHistId, Proposal_propId, ObsHistory_observationId FROM ObsProposalHistory;"):
+			
+			self.obs_proposal_history_table["propHistId"].append(row[0])
+			self.obs_proposal_history_table["proposal_propId"].append(row[1])
+			self.obs_proposal_history_table["obsHistory_observationId"].append(row[2])
 
 		for row in self.c.execute("SELECT slewTime FROM SlewHistory;"):
 			
 			self.slew_history_table["slewTime"].append(row[0])
-
-		for row in self.c.execute("SELECT Proposal_propId FROM ObsProposalHistory;"):
-
-			self.obs_proposal_history_table["proposal_propId"].append(row[0])
 
 		# for row in self.c.execute("SELECT propId FROM Proposal;"):
 
@@ -261,6 +265,96 @@ class basicAnalysis:
 		print("		{:>42}% {:>10}%".format(total_prop_hist_perc, total_prop_perc))
 
 
+	# Because we load only tables and thier corresponding, it is redundent to do another quary.
+	# Rather than using a costly quary's we do something similiar to a sql "join". I use an index
+	# based array on the proposal_proId column of the schema, then from there use the index I am on
+	# to derive what filter it corresponds to on the other columns.  
+	def numberOfVisitsInEachFilterPerProposal(self):
+		
+
+		numberOfVisitsPerFilterPerProposal = {}
+
+		# Our columns that we will need to traverse to calculate this metric
+		obs_proposal_history_propId_col = self.obs_proposal_history_table["proposal_propId"]
+		obs_proposal_history_obsHistoryId_col = self.obs_proposal_history_table["obsHistory_observationId"]
+		obs_history_filter_col = self.obs_history_table["filter"]
+
+
+		for i in range(len(obs_proposal_history_propId_col)):
+
+
+			# if i == 132:
+			# 	break
+
+			proposalId = obs_proposal_history_propId_col[i]
+
+			# Our arrays start at 0, the unique id's we derive indexes from do not			
+			indexToObsHistory = obs_proposal_history_obsHistoryId_col[i]-1
+
+			filterForThisProposal = obs_history_filter_col[indexToObsHistory]
+
+			# If the proposal already exists in our dictionary
+			if proposalId in numberOfVisitsPerFilterPerProposal:
+				
+				# AND if the the filter exists in that then increment its count
+				if filterForThisProposal in numberOfVisitsPerFilterPerProposal[proposalId]:
+					numberOfVisitsPerFilterPerProposal[proposalId][filterForThisProposal] += 1
+
+				# If the filter does not exist create it and set it to 1
+				else:
+					numberOfVisitsPerFilterPerProposal[proposalId][filterForThisProposal] = 1
+
+			# If the proposal is not in the dictinary, add it along with its filter set to 1
+			else:
+				numberOfVisitsPerFilterPerProposal[proposalId] = {}
+				numberOfVisitsPerFilterPerProposal[proposalId][filterForThisProposal] = 1
+
+		
+		# The lists in the block below MUST be the same length for out loop logic to work
+		FILTERS = ["z", "y", "i", "r", "g", "u"]
+		NES = [0, 0, 0, 0, 0, 0]
+		SCP = [0, 0, 0, 0, 0, 0]
+		WFD = [0, 0, 0, 0, 0, 0]
+		GP = [0, 0, 0, 0, 0, 0]
+		DD = [0, 0, 0, 0, 0, 0]
+	
+
+		# Remember that the hard coded 1,2,3,4,5 correspond to the proposal id's from the db schema
+		for i in range(len(NES)):
+
+			try:
+				NES[i] = numberOfVisitsPerFilterPerProposal[1][FILTERS[i]]
+			except Exception:
+				pass
+
+			try:
+				WFD[i] = numberOfVisitsPerFilterPerProposal[2][FILTERS[i]]
+			except Exception:
+				pass
+
+			try:
+				SCP[i] = numberOfVisitsPerFilterPerProposal[3][FILTERS[i]]
+			except Exception:
+				pass
+
+			try:
+				GP[i] = numberOfVisitsPerFilterPerProposal[4][FILTERS[i]]
+			except Exception:
+				pass
+
+			try:
+				DD[i] = numberOfVisitsPerFilterPerProposal[5][FILTERS[i]]
+			except Exception:
+				pass
+
+
+		print("		{:>18}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format(" ", "z", "y", "i", "r", "g", "u"))
+		print("		NorthElipticSpur  : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *NES ) )
+		print("		SouthCelestialPole: {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *SCP ) )
+		print("		WideFastDeep      : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *WFD ) )
+		print("		GalacticPlane     : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *GP ) )
+		print("		DeepDrilling      : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *DD ) )
+
 
 
 ba = basicAnalysis()
@@ -284,3 +378,7 @@ ba.avgSlewTime()
 print("")
 
 ba.numberOfVisitsPerProposal()
+
+print("")
+
+ba.numberOfVisitsInEachFilterPerProposal()

@@ -12,7 +12,7 @@ definition will be it's own metric. There may be redundency when calculating
 averages for example. However a user will be free to comment out any metrics
 they wish with no recoil. For ease of readbility, variables should be very
 explicit. If variable names contains an underscore, then I am refering to 
-database schema related attributes.
+either a whole table, or just a column form the database schema.
 """
 class basicAnalysis:
 

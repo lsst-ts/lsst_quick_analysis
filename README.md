@@ -3,18 +3,12 @@
 "lsst_quick_analysis" is a tool used to produce various metrics to helps users
 do quick analysis on OpSim4 output.
 
-## IMPORTANT
-
-MUST BE RAN WITH PYTHON3 INTERPRETER
-known to fail with python 2.*
 
 ### How to use
 
-1) Do `chmod a+x [filename]` on any of the scripts you wish to run, for example
+1) Do `./[script]` on any of the scripts you wish to run, list of available script below
 
-	$ chmod a+x basicAnalysis.py
-
-2) Modify `settings.py` variables to fit your environment
+Example `./basicAnalysis`
 
 
 ### Available scripts

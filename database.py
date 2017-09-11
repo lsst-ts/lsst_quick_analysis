@@ -1,6 +1,7 @@
 import os
 import sys
 import sqlite3
+import re
 
 from config import *
 
@@ -37,7 +38,17 @@ class database:
 
 		if len(sys.argv) == 2:
 
-			print(sys.argv[1])
+
+			r = re.compile('\w*_(' + sys.argv[1] + ').(db)')
+
+			databaseFile = filter(r.match, self.files)
+
+			print(databaseFile)
+
+			input()
+
+
+
 
 		else:
 

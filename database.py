@@ -1,4 +1,5 @@
 import os
+import sys
 import sqlite3
 
 from config import *
@@ -6,7 +7,7 @@ from config import *
 
 """The database class is responsible for configuring all database related tasks.
 This includes connection to "*.db" files and exposing it's database related 
-resources to ourside classes, for example a cursor. 
+resources to outside classes, for example a cursor. 
 """
 class database:
 
@@ -30,27 +31,37 @@ class database:
 	"""
 	def connect(self):
 
-		print("=" * 80)
-		print("Found [" + str(len(self.files)) + "] databases inside of '" + DB_DIRECTORY + "'")
-		print("-" * 80)
-		print('%5s' % self.allFiles)
-		print(("=" * 80) +"\n")
+		if len(sys.argv) > 2:
 
-		databaseFile = str(input('Please type the name of the database you wish to analyze: '))
-		
-		while True:
+			print("Can only be ran with 1 or no arguments, ex; `./basicAnalysis 2177` will execute the script on the first file named `*_2177` within the `DB_DIRECTORY` specified in `config.py` ")
 
-			if databaseFile in self.files:
-				break
-			else:
-				print("\n" + ("-"* 80))
-				print("!!! Could not find '" + databaseFile + "' inside of '" + DB_DIRECTORY + "' !!!")
-				print(("-" *80) + "\n")
+		if len(sys.argv) == 2:
 
-				databaseFile = str(input('try again: '))
+			print(sys.argv[1])
+
+		else:
+
+			print("=" * 80)
+			print("Found [" + str(len(self.files)) + "] databases inside of '" + DB_DIRECTORY + "'")
+			print("-" * 80)
+			print('%5s' % self.allFiles)
+			print(("=" * 80) +"\n")
+
+			databaseFile = str(input('Please type the name of the database you wish to analyze: '))
+			
+			while True:
+
+				if databaseFile in self.files:
+					break
+				else:
+					print("\n" + ("-"* 80))
+					print("!!! Could not find '" + databaseFile + "' inside of '" + DB_DIRECTORY + "' !!!")
+					print(("-" *80) + "\n")
+
+					databaseFile = str(input('try again: '))
 
 
-		self.path = DB_DIRECTORY + databaseFile
-		conn = sqlite3.connect(self.path)
-		curs = conn.cursor()	
-		return curs
+			self.path = DB_DIRECTORY + databaseFile
+			conn = sqlite3.connect(self.path)
+			curs = conn.cursor()	
+			return curs

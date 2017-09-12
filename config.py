@@ -4,10 +4,6 @@ REPORT_DIRECTORY = "reports/"
 # The folder that contains all your databases
 DB_DIRECTORY = "/Users/aheyer/Projects/OpSimDB/"
 
-# The amount of exposures we define a visit as
-VISIT = 2
-
-
 # Python 2 & 3 compatible function binding
 try:
    input = raw_input

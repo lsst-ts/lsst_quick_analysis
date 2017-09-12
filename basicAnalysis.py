@@ -52,20 +52,13 @@ class basicAnalysis:
 			self.slew_history_table["slewTime"].append(row[0])
 
 
-	def numberOfExposures(self):
-
-		numberOfExposures = len(self.obs_history_table["night"])
-
-		print("		number of exposures: " + str(numberOfExposures))
-
-
 	def numberOfVisits(self):
 
-		numberOfVisits = int(len(self.obs_history_table["night"])/VISIT)
+		numberOfVisits = len(self.obs_history_table["night"])
 
 		print("		number of visits: " + str(numberOfVisits))
 
-	
+
 	"""By counting the amount of unique values inside of the "night" array that
 	is within the obs_history_table, we can find the amount of nights that this
 	survey covered. It may be intuitve to take the last integer of the array,
@@ -91,7 +84,7 @@ class basicAnalysis:
 
 	def averageVisitsPerObservedNights(self):
 		
-		numberOfVisits = int(len(self.obs_history_table["night"])/VISIT)
+		numberOfVisits = len(self.obs_history_table["night"]) * 1.0
 
 		numberOfObservedNights = 1
 
@@ -196,55 +189,49 @@ class basicAnalysis:
 	"""
 	def numberOfVisitsPerProposal(self):
 
-		
-		histVisitCount = 0
+		numberOfVisits = len(self.obs_history_table["night"])
+
 		historyProposalCounter = {}
 		
 		# get the total amount of exposures made on behalf of a proposal, note
-		# that some exposures can count as more than 1 proposal
+		# that some visits can count for more than 1 proposal
 		for each in self.obs_proposal_history_table["proposal_propId"]:
 			
-			histVisitCount += 1
-
-			# Also grab the amount PER proposal, not just the total
+			# Grab the amount PER proposal
 			if each in historyProposalCounter:
 				historyProposalCounter[each] += 1
 			else:
 				historyProposalCounter[each] = 1
 
 
-		# Total amount of visits made on behalf of a proposal, given an
-		# arbitrary defenition of a VISIT
-		histVisitCount /= VISIT
-
-		# Python 2 needs floats, otherwise 2/3 = 0
-		histVisitCount *= 1.0
+		# Python 2 float conversion, otherwise 2/3 = 0
+		numberOfVisits *= 1.0
 		
 		# Visit count of each proposal
-		NES = historyProposalCounter[1]/VISIT
-		SCP = historyProposalCounter[2]/VISIT
-		WFD = historyProposalCounter[3]/VISIT
-		GP = historyProposalCounter[4]/VISIT
-		DD = historyProposalCounter[5]/VISIT
+		NES = historyProposalCounter[1] * 1.0
+		SCP = historyProposalCounter[2] * 1.0
+		WFD = historyProposalCounter[3] * 1.0
+		GP = historyProposalCounter[4] * 1.0
+		DD = historyProposalCounter[5] * 1.0
+		total_prop_hist = NES + SCP + WFD + GP + DD
 
 		# Percent of each proposal reletaive to the total amount of vists
 		# made on behalf of a proposal. Remember, may be over 100% totaled since
 		# some visits can count for two proposals. 
-		NES_prop_hist_perc = (NES/histVisitCount) * 100
-		SCP_prop_hist_perc = SCP/histVisitCount * 100
-		WFD_prop_hist_perc = WFD/histVisitCount * 100
-		GP_prop_hist_perc = GP/histVisitCount * 100
-		DD_prop_hist_perc = DD/histVisitCount * 100
-		total_prop_hist_perc = round(NES_prop_hist_perc + SCP_prop_hist_perc + WFD_prop_hist_perc + GP_prop_hist_perc + DD_prop_hist_perc,2)
+		NES_prop_hist_perc = (NES/numberOfVisits) * 100
+		SCP_prop_hist_perc = (SCP/numberOfVisits) * 100
+		WFD_prop_hist_perc = (WFD/numberOfVisits) * 100
+		GP_prop_hist_perc = (GP/numberOfVisits) * 100
+		DD_prop_hist_perc = (DD/numberOfVisits) * 100
+		total_prop_hist_perc = round(NES_prop_hist_perc + SCP_prop_hist_perc + WFD_prop_hist_perc + GP_prop_hist_perc + DD_prop_hist_perc,4)
 
-
-		print("		{:>42}".format("(history)"))
-		print("		NorthElipticSpur  : {:>10} {:>10}%".format(str(round(NES,2)), str(round(NES_prop_hist_perc,2))))
-		print("		SouthCelestialPole: {:>10} {:>10}%".format(str(round(SCP,2)), str(round(SCP_prop_hist_perc,2))))
-		print("		WideFastDeep      : {:>10} {:>10}%".format(str(round(WFD,2)), str(round(WFD_prop_hist_perc,2))))
-		print("		GalacticPlane     : {:>10} {:>10}%".format(str(round(GP,2)) , str(round(GP_prop_hist_perc,2))))
-		print("		DeepDrilling      : {:>10} {:>10}%".format(str(round(DD,2)) , str(round(DD_prop_hist_perc,2))))
-		print("		{:>42}%".format(total_prop_hist_perc))
+		print("		NorthElipticSpur  : {:>10} {:>10}%".format(str(round(NES,4)), str(round(NES_prop_hist_perc,4))))
+		print("		SouthCelestialPole: {:>10} {:>10}%".format(str(round(SCP,4)), str(round(SCP_prop_hist_perc,4))))
+		print("		WideFastDeep      : {:>10} {:>10}%".format(str(round(WFD,4)), str(round(WFD_prop_hist_perc,4))))
+		print("		GalacticPlane     : {:>10} {:>10}%".format(str(round(GP,4)) , str(round(GP_prop_hist_perc,4))))
+		print("		DeepDrilling      : {:>10} {:>10}%".format(str(round(DD,4)) , str(round(DD_prop_hist_perc,4))))
+		print("		" + "-"*42)
+		print("		Total             : {:>10} {:>10}%".format(total_prop_hist, total_prop_hist_perc))
 
 
 	"""Because we load only tables and reduce run time by limiting our sql calls,
@@ -254,7 +241,7 @@ class basicAnalysis:
 	"""  
 	def numberOfVisitsInEachFilterPerProposal(self):
 		
-		# Will look something like {"[proposal Id]" : {"filter Id" : "count"} }
+		# Will look something like {"proposal Id" : {"filter Id" : "count"} }
 		numberOfVisitsPerFilterPerProposal = {}
 
 		# Our columns that we will need to traverse to calculate this metric
@@ -342,7 +329,6 @@ class basicAnalysis:
 
 ba = basicAnalysis()
 
-ba.numberOfExposures()
 ba.numberOfVisits()
 ba.numberOfObservedNights()
 ba.averageVisitsPerObservedNights()

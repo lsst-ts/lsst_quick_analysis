@@ -35,20 +35,22 @@ class database:
 		if len(sys.argv) > 2:
 
 			print("Can only be ran with 1 or no arguments, ex; `./basicAnalysis 2177` will execute the script on the first file named `*_2177` within the `DB_DIRECTORY` specified in `config.py` ")
+			sys.exit()
 
 		if len(sys.argv) == 2:
 
-
 			r = re.compile('\w*_(' + sys.argv[1] + ').(db)')
 
-			databaseFile = filter(r.match, self.files)
-
-			print(databaseFile)
-
-			input()
-
-
-
+			try:
+				databaseFile = filter(r.match, self.files)[0]
+				self.path = DB_DIRECTORY + databaseFile
+				conn = sqlite3.connect(self.path)
+				curs = conn.cursor()
+				return curs
+			
+			except Exception:
+				print("Could not find a fild named '" + DB_DIRECTORY + "*_" + sys.argv[1] + ".db'")
+				sys.exit()
 
 		else:
 

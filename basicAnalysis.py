@@ -52,6 +52,12 @@ class basicAnalysis:
 			self.slew_history_table["slewTime"].append(row[0])
 
 
+		# Check to see if our tables have data, exit if not
+		if len(self.obs_history_table["night"]) == 0:
+			print("This table seems to have no recorded visits, exiting")
+			sys.exit()
+
+
 	def numberOfVisits(self):
 
 		numberOfVisits = len(self.obs_history_table["night"])
@@ -191,7 +197,7 @@ class basicAnalysis:
 
 		numberOfVisits = len(self.obs_history_table["night"])
 
-		historyProposalCounter = {}
+		historyProposalCounter = { 1:0, 2:0, 3:0, 4:0, 5:0 }
 		
 		# get the total amount of exposures made on behalf of a proposal, note
 		# that some visits can count for more than 1 proposal
@@ -248,6 +254,15 @@ class basicAnalysis:
 		obs_proposal_history_propId_col = self.obs_proposal_history_table["proposal_propId"]
 		obs_proposal_history_obsHistoryId_col = self.obs_proposal_history_table["obsHistory_observationId"]
 		obs_history_filter_col = self.obs_history_table["filter"]
+
+		# Let's check to make sure our index which point to another table, actually exists in that table.
+		# In other words, make sure we won't get an index out of bounds.
+		if obs_proposal_history_obsHistoryId_col[-1] > len(obs_history_filter_col):
+			print("		This DB seems to have foriegn keys in the ObsProposalHistory")
+			print("		table which do not exist in the ObsProposalHistory table,")
+			print("		therefore cannot compute the number of visits in each filter")
+			print("		per proposal, skipping this metric")
+			return
 
 		# Start by itertating through all exposures made on behalf of a proposal,
 		# may be more than the amount of exposures physically made since one exposure

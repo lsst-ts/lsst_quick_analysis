@@ -6,15 +6,18 @@ do quick analysis on OpSim4 output.
 
 ### How to use
 
-1) Do `./[script]` on any of the scripts you wish to run, list of available script below
+1) Do `cp configTemplate.py config.py`
 
-Example `./basicAnalysis`
+2) Modify the `DB_DIRECTORY` variable inside of `config.py`
+
+3) Do `./[script]` on any of the scripts you wish to run
+
 
 
 ### Available scripts
 
-basicAnalysis.py: prints out a summary of varius values (averages, min, max etc.)
+`./basicAnalysis.py [datase#]`: Prints to stdout a summary of varius values (averages, min, max etc.) An example run of "collosus_2177.db" could be `./basicAnalysis 2177`. This command would analyse the first file found with the 2177 appendage.
 
-basicReport.py: Writes out to a file useful columns in a human readable table
+`./basicReport.py`: Writes out to a file useful columns in a human readable table
 
 

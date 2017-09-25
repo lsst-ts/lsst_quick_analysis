@@ -18,6 +18,8 @@ class basicAnalysis:
 
 	db = database()
 	c = db.connect()
+	print("\nConnecting to " + db.path)
+
 	
 	# Our dictionaries where all metric calculations derive from
 	obs_history_table = {"observationId": [],"night":[], "filter":[]}

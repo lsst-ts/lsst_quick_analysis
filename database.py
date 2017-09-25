@@ -49,7 +49,7 @@ class database:
 				return curs
 			
 			except Exception:
-				print("Could not find a fild named '" + DB_DIRECTORY + "*_" + sys.argv[1] + ".db'")
+				print("Could not find a file named '" + DB_DIRECTORY + "*_" + sys.argv[1] + ".db'")
 				sys.exit()
 
 		else:
@@ -76,5 +76,5 @@ class database:
 
 			self.path = DB_DIRECTORY + databaseFile
 			conn = sqlite3.connect(self.path)
-			curs = conn.cursor()	
+			curs = conn.cursor()
 			return curs

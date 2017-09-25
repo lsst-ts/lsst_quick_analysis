@@ -1,5 +1,5 @@
-# Folder path that contains all your databases
-DB_DIRECTORY = "/path/to/opsimDatabases/"
+# Absolute folder path that contains all your databases
+DB_DIRECTORY = "/absolute/path/to/opsimDatabases/"
 
 # Folder path which reports are written into 
 REPORT_DIRECTORY = "reports/"

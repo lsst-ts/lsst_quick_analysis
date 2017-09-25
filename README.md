@@ -16,7 +16,7 @@ do quick analysis on OpSim4 output.
 
 ### Available scripts
 
-`./basicAnalysis.py [datase#]`: Prints to stdout a summary of varius values (averages, min, max etc.) An example run of "collosus_2177.db" could be `./basicAnalysis 2177`. This command would analyse the first file found with the 2177 appendage.
+`./basicAnalysis.py [run #]`: Prints to stdout a summary of varius values (averages, min, max etc.) An example run of "collosus_2177.db" could be `./basicAnalysis 2177`. This command would analyse the first file found with the 2177 appendage.
 
 `./basicReport.py`: Writes out to a file useful columns in a human readable table
 

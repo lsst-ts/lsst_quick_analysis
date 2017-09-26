@@ -18,6 +18,8 @@ class basicAnalysis:
 
 	db = database()
 	c = db.connect()
+	print("\nConnecting to " + db.path)
+
 	
 	# Our dictionaries where all metric calculations derive from
 	obs_history_table = {"observationId": [],"night":[], "filter":[]}
@@ -326,6 +328,19 @@ class basicAnalysis:
 		print("		DeepDrilling      : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *DD ) )
 
 
+	def totalTimeSpent(self):
+
+		# Take advantage of work that has been done in database.py to find log file
+		r = re.compile('\w*_(' + self.db.dbNumber + ').(log)')
+		logFile = filter(r.match, self.db.logFiles)[0]
+		logFilePath = LOG_DIRECTORY + logFile
+
+		# Open the log file and print the time spent line
+		fopen = open(logFilePath, "r")
+		for line in fopen:
+			if "Total running time" in line:
+				print("		" + line.split("-")[-1][1:])
+
 
 ba = basicAnalysis()
 
@@ -351,3 +366,7 @@ ba.numberOfVisitsPerProposal()
 print("")
 
 ba.numberOfVisitsInEachFilterPerProposal()
+
+print("")
+
+ba.totalTimeSpent()

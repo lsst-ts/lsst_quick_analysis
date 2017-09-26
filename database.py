@@ -12,8 +12,13 @@ resources to outside classes, for example a cursor.
 """
 class database:
 
-	files = [f for f in os.listdir(DB_DIRECTORY) 
+	# create a list of all the database files
+	files = [f for f in os.listdir(DB_DIRECTORY)
 		if os.path.isfile(os.path.join(DB_DIRECTORY, f)) and ".db" in f]
+
+	# create a list of all the log files
+	logFiles = [f for f in os.listdir(LOG_DIRECTORY)
+		if os.path.isfile(os.path.join(LOG_DIRECTORY, f)) and ".log" in f]
 
 	# Create a string friendly list of files found in DB_DIRECTORY
 	allFiles = ""
@@ -23,8 +28,9 @@ class database:
 
 		allFiles += each + ", "
 
-	# Make this public path avilable to other classes
+	# Some public instance variables that are useful for definitions
 	path = ""
+	dbNumber = -1
 
 	"""Creates a cursor to a database to be used within the other scripts. Also
 	responsible for printing out useful information to the user along with 
@@ -42,8 +48,11 @@ class database:
 			r = re.compile('\w*_(' + sys.argv[1] + ').(db)')
 
 			try:
+
 				databaseFile = filter(r.match, self.files)[0]
 				self.path = DB_DIRECTORY + databaseFile
+				self.dbNumber = sys.argv[1]
+
 				conn = sqlite3.connect(self.path)
 				curs = conn.cursor()
 				return curs
@@ -66,6 +75,7 @@ class database:
 
 				if databaseFile in self.files:
 					break
+
 				else:
 					print("\n" + ("-"* 80))
 					print("!!! Could not find '" + databaseFile + "' inside of '" + DB_DIRECTORY + "' !!!")
@@ -73,8 +83,10 @@ class database:
 
 					databaseFile = str(input('try again: '))
 
-
 			self.path = DB_DIRECTORY + databaseFile
+			# the number is the value between the last _ and . 
+			self.dbNumber = databaseFile.split('_')[-1].split('.')[0]
+
 			conn = sqlite3.connect(self.path)
 			curs = conn.cursor()
 			return curs

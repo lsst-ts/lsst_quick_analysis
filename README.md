@@ -10,8 +10,9 @@ do quick analysis on OpSim4 output.
 
 2) Modify the `DB_DIRECTORY` variable inside of `config.py`
 
-3) Do `./[script]` on any of the scripts you wish to run
+3) Modify the `LOG_DIRECTORY` variable inside of `config.py`
 
+4) Do `./[script]` on any of the scripts you wish to run
 
 
 ### Available scripts

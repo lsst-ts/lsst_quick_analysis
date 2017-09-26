@@ -1,6 +1,9 @@
 # Absolute folder path that contains all your databases
 DB_DIRECTORY = "/absolute/path/to/opsimDatabases/"
 
+# Absolute folder path that contains all your logs
+DB_DIRECTORY = "/absolute/path/to/opsimLogs/"
+
 # Folder path which reports are written into 
 REPORT_DIRECTORY = "reports/"
 

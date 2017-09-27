@@ -321,13 +321,13 @@ class basicAnalysis:
 				pass
 
 		print("		Visits in each filter per proposal")
-		print("		" + "-"*60)
+		print("		" + "-"*66)
 		print("		NorthElipticSpur  : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *NES ) )
 		print("		SouthCelestialPole: {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *SCP ) )
 		print("		WideFastDeep      : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *WFD ) )
 		print("		GalacticPlane     : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *GP ) )
 		print("		DeepDrilling      : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *DD ) )
-		print("		" + "-"*60)
+		print("		" + "-"*66)
 		print("		{:>18}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format(" ", "z", "y", "i", "r", "g", "u"))
 
 

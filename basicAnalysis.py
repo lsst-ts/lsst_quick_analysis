@@ -61,13 +61,11 @@ class basicAnalysis:
 		print("		number of visits: " + str(numberOfVisits))
 
 
-	"""By counting the amount of unique values inside of the "night" array that
-	is within the obs_history_table, we can find the amount of nights that this
-	survey covered. It may be intuitve to take the last integer of the array,
-	however this value would be the total amount of nights, including those
-	that the camera was down due to repair/filter changes/ etc.
+	"""Counts the number of uniqe nights, as well as the total amount. Therfore
+	gives the total amount of nights the telescope has been observing for, and
+	the downtime.
 	"""
-	def numberOfObservedNights(self):
+	def numberOfNightsAndObserved(self):
 
 		numberOfObservedNights = 1
 
@@ -81,6 +79,7 @@ class basicAnalysis:
 				numberOfObservedNights += 1
 				currentNight = night
 
+		print("		number of nights: " + str(self.obs_history_table["night"][-1]))
 		print("		number of observed nights: " + str(numberOfObservedNights))
 
 
@@ -122,7 +121,7 @@ class basicAnalysis:
 
 	def avgFilterChangesPerNight(self):
 
-		filterChangeCounter = 0
+		filterChangeCounter = 0.0
 		currentCamFilter = self.obs_history_table["filter"][0]
 
 		for camFilter in self.obs_history_table["filter"]:			
@@ -133,7 +132,7 @@ class basicAnalysis:
 				filterChangeCounter += 1
 				currentCamFilter = camFilter
 
-		numberOfObservedNights = 1
+		numberOfObservedNights = 1.0
 
 		currentNight = self.obs_history_table["night"][0]
 
@@ -147,7 +146,7 @@ class basicAnalysis:
 
 		avgFilterChangesPerNight = filterChangeCounter/numberOfObservedNights
 
-		print("		avg filer changes/observed nights: " + str(round(avgFilterChangesPerNight,2)))
+		print("		avg filer changes/observed nights: " + str(avgFilterChangesPerNight))
 
 
 	def maxSlewTime(self):
@@ -227,6 +226,8 @@ class basicAnalysis:
 		DD_prop_hist_perc = (DD/numberOfVisits) * 100
 		total_prop_hist_perc = round(NES_prop_hist_perc + SCP_prop_hist_perc + WFD_prop_hist_perc + GP_prop_hist_perc + DD_prop_hist_perc,4)
 
+		print("		Visits per proposal")
+		print("		" + "-"*42)
 		print("		NorthElipticSpur  : {:>10} {:>10}%".format(str(round(NES,4)), str(round(NES_prop_hist_perc,4))))
 		print("		SouthCelestialPole: {:>10} {:>10}%".format(str(round(SCP,4)), str(round(SCP_prop_hist_perc,4))))
 		print("		WideFastDeep      : {:>10} {:>10}%".format(str(round(WFD,4)), str(round(WFD_prop_hist_perc,4))))
@@ -319,33 +320,55 @@ class basicAnalysis:
 			except Exception:
 				pass
 
-
-		print("		{:>18}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format(" ", "z", "y", "i", "r", "g", "u"))
+		print("		Visits in each filter per proposal")
+		print("		" + "-"*60)
 		print("		NorthElipticSpur  : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *NES ) )
 		print("		SouthCelestialPole: {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *SCP ) )
 		print("		WideFastDeep      : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *WFD ) )
 		print("		GalacticPlane     : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *GP ) )
 		print("		DeepDrilling      : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *DD ) )
+		print("		" + "-"*60)
+		print("		{:>18}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format(" ", "z", "y", "i", "r", "g", "u"))
 
 
 	def totalTimeSpent(self):
 
 		# Take advantage of work that has been done in database.py to find log file
 		r = re.compile('\w*_(' + self.db.dbNumber + ').(log)')
-		logFile = filter(r.match, self.db.logFiles)[0]
+		
+		try:
+			logFile = filter(r.match, self.db.logFiles)[0]
+		except Exception as e:
+			print("		Could not find logfile, emitting 'totalTimeSpent' metric")
+			return
+
 		logFilePath = LOG_DIRECTORY + logFile
 
 		# Open the log file and print the time spent line
 		fopen = open(logFilePath, "r")
 		for line in fopen:
+			
 			if "Total running time" in line:
-				print("		" + line.split("-")[-1][1:])
+
+				# Remove junk in the line
+				timeLine = line.split("-")[-1][1:]
+
+				# Extract only the time and convert to float
+				timeSec = float(timeLine.split("=")[-1][1:].split(" ")[0])
+
+				# Seconds to hours, minutes, seconds conversion
+				m, s = divmod(timeSec, 60)
+				h, m = divmod(m, 60)
+				
+				print("		Total running time (s)    : " + str(timeSec))
+				print("		Total running time (h,m,s): %d:%02d:%02d" % (h, m, s))
+
 
 
 ba = basicAnalysis()
 
 ba.numberOfVisits()
-ba.numberOfObservedNights()
+ba.numberOfNightsAndObserved()
 ba.averageVisitsPerObservedNights()
 
 print("")

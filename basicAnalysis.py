@@ -123,7 +123,7 @@ class basicAnalysis:
 
 	def avgFilterChangesPerNight(self):
 
-		filterChangeCounter = 0
+		filterChangeCounter = 0.0
 		currentCamFilter = self.obs_history_table["filter"][0]
 
 		for camFilter in self.obs_history_table["filter"]:			
@@ -134,7 +134,7 @@ class basicAnalysis:
 				filterChangeCounter += 1
 				currentCamFilter = camFilter
 
-		numberOfObservedNights = 1
+		numberOfObservedNights = 1.0
 
 		currentNight = self.obs_history_table["night"][0]
 
@@ -148,7 +148,7 @@ class basicAnalysis:
 
 		avgFilterChangesPerNight = filterChangeCounter/numberOfObservedNights
 
-		print("		avg filer changes/observed nights: " + str(round(avgFilterChangesPerNight,2)))
+		print("		avg filer changes/observed nights: " + str(avgFilterChangesPerNight))
 
 
 	def maxSlewTime(self):

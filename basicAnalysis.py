@@ -61,13 +61,11 @@ class basicAnalysis:
 		print("		number of visits: " + str(numberOfVisits))
 
 
-	"""By counting the amount of unique values inside of the "night" array that
-	is within the obs_history_table, we can find the amount of nights that this
-	survey covered. It may be intuitve to take the last integer of the array,
-	however this value would be the total amount of nights, including those
-	that the camera was down due to repair/filter changes/ etc.
+	"""Counts the number of uniqe nights, as well as the total amount. Therfore
+	gives the total amount of nights the telescope has been observing for, and
+	the downtime.
 	"""
-	def numberOfObservedNights(self):
+	def numberOfNightsAndObserved(self):
 
 		numberOfObservedNights = 1
 
@@ -366,7 +364,7 @@ class basicAnalysis:
 ba = basicAnalysis()
 
 ba.numberOfVisits()
-ba.numberOfObservedNights()
+ba.numberOfNightsAndObserved()
 ba.averageVisitsPerObservedNights()
 
 print("")

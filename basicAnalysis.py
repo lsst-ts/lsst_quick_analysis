@@ -81,6 +81,7 @@ class basicAnalysis:
 				numberOfObservedNights += 1
 				currentNight = night
 
+		print("		number of nights         : " + str(self.obs_history_table["night"][-1]))
 		print("		number of observed nights: " + str(numberOfObservedNights))
 
 
@@ -332,14 +333,34 @@ class basicAnalysis:
 
 		# Take advantage of work that has been done in database.py to find log file
 		r = re.compile('\w*_(' + self.db.dbNumber + ').(log)')
-		logFile = filter(r.match, self.db.logFiles)[0]
+		
+		try:
+			logFile = filter(r.match, self.db.logFiles)[0]
+		except Exception as e:
+			print("		Could not find logfile, emitting 'totalTimeSpent' metric")
+			return
+
 		logFilePath = LOG_DIRECTORY + logFile
 
 		# Open the log file and print the time spent line
 		fopen = open(logFilePath, "r")
 		for line in fopen:
+			
 			if "Total running time" in line:
-				print("		" + line.split("-")[-1][1:])
+
+				# Remove junk in the line
+				timeLine = line.split("-")[-1][1:]
+
+				# Extract only the time and convert to float
+				timeSec = float(timeLine.split("=")[-1][1:].split(" ")[0])
+
+				# Seconds to hours, minutes, seconds conversion
+				m, s = divmod(timeSec, 60)
+				h, m = divmod(m, 60)
+				
+				print("		Total running time (s)    : " + str(timeSec))
+				print("		Total running time (h,m,s): %d:%02d:%02d" % (h, m, s))
+
 
 
 ba = basicAnalysis()

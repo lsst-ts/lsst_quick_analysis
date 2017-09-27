@@ -79,7 +79,7 @@ class basicAnalysis:
 				numberOfObservedNights += 1
 				currentNight = night
 
-		print("		number of nights         : " + str(self.obs_history_table["night"][-1]))
+		print("		number of nights: " + str(self.obs_history_table["night"][-1]))
 		print("		number of observed nights: " + str(numberOfObservedNights))
 
 

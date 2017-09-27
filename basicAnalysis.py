@@ -226,6 +226,8 @@ class basicAnalysis:
 		DD_prop_hist_perc = (DD/numberOfVisits) * 100
 		total_prop_hist_perc = round(NES_prop_hist_perc + SCP_prop_hist_perc + WFD_prop_hist_perc + GP_prop_hist_perc + DD_prop_hist_perc,4)
 
+		print("		Visits per proposal")
+		print("		" + "-"*42)
 		print("		NorthElipticSpur  : {:>10} {:>10}%".format(str(round(NES,4)), str(round(NES_prop_hist_perc,4))))
 		print("		SouthCelestialPole: {:>10} {:>10}%".format(str(round(SCP,4)), str(round(SCP_prop_hist_perc,4))))
 		print("		WideFastDeep      : {:>10} {:>10}%".format(str(round(WFD,4)), str(round(WFD_prop_hist_perc,4))))
@@ -318,13 +320,15 @@ class basicAnalysis:
 			except Exception:
 				pass
 
-
-		print("		{:>18}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format(" ", "z", "y", "i", "r", "g", "u"))
+		print("		Visits in each filter per proposal")
+		print("		" + "-"*60)
 		print("		NorthElipticSpur  : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *NES ) )
 		print("		SouthCelestialPole: {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *SCP ) )
 		print("		WideFastDeep      : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *WFD ) )
 		print("		GalacticPlane     : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *GP ) )
 		print("		DeepDrilling      : {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format( *DD ) )
+		print("		" + "-"*60)
+		print("		{:>18}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}  {:>6}".format(" ", "z", "y", "i", "r", "g", "u"))
 
 
 	def totalTimeSpent(self):

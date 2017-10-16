@@ -38,12 +38,8 @@ class database:
 	"""
 	def connect(self):
 
-		if len(sys.argv) > 2:
 
-			print("Can only be ran with 1 or no arguments, ex; `./basicAnalysis 2177` will execute the script on the first file named `*_2177` within the `DB_DIRECTORY` specified in `config.py` ")
-			sys.exit()
-
-		if len(sys.argv) == 2:
+		if len(sys.argv) > 1:
 
 			r = re.compile('\w*_(' + sys.argv[1] + ').(db)')
 

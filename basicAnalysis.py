@@ -31,25 +31,31 @@ class basicAnalysis:
 	is to run more query's. Some columns, such as id's to other tables are also
 	needed for python equivilent of sql "joins". 
 	"""
-	def __init__(self):
+	def __init__(self, limit=None):
 
 		print("\n" + ("=" * 80) ) 
 		print("CALCULATING METRICS...")
 		print("-" * 80)
 
-		for row in self.c.execute("SELECT observationId, night, filter FROM ObsHistory;"):	
+
+		limiterString = ";"
+
+		if limit is not None:
+			limiterString = " LIMIT " + limit + ";"
+
+		for row in self.c.execute("SELECT observationId, night, filter FROM ObsHistory" + limiterString):	
 
 			self.obs_history_table["observationId"].append(row[0])
 			self.obs_history_table["night"].append(row[1])
 			self.obs_history_table["filter"].append(row[2])
 
-		for row in self.c.execute("SELECT propHistId, Proposal_propId, ObsHistory_observationId FROM ObsProposalHistory;"):
+		for row in self.c.execute("SELECT propHistId, Proposal_propId, ObsHistory_observationId FROM ObsProposalHistory" + limiterString):
 			
 			self.obs_proposal_history_table["propHistId"].append(row[0])
 			self.obs_proposal_history_table["proposal_propId"].append(row[1])
 			self.obs_proposal_history_table["obsHistory_observationId"].append(row[2])
 
-		for row in self.c.execute("SELECT slewTime FROM SlewHistory;"):
+		for row in self.c.execute("SELECT slewTime FROM SlewHistory" + limiterString):
 			
 			self.slew_history_table["slewTime"].append(row[0])
 
@@ -364,8 +370,16 @@ class basicAnalysis:
 				print("		Total running time (h,m,s): %d:%02d:%02d" % (h, m, s))
 
 
+# Argument checking for this script
+if len(sys.argv) > 3:
+	print("Can be ran with two optional arguments, `basicAnalysis [db number] [number of nights]`")
+	sys.exit()
 
-ba = basicAnalysis()
+try:
+	ba = basicAnalysis(sys.argv[2])
+except Exception as e:
+	ba = basicAnalysis()
+
 
 ba.numberOfVisits()
 ba.numberOfNightsAndObserved()

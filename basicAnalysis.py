@@ -376,10 +376,10 @@ if len(sys.argv) > 3:
 	sys.exit()
 
 try:
+	int(sys.argv[2])
 	ba = basicAnalysis(sys.argv[2])
 except Exception as e:
-	ba = basicAnalysis()
-
+	raise("Invalid second argument: " + str(sys.argv[2]))
 
 ba.numberOfVisits()
 ba.numberOfNightsAndObserved()
